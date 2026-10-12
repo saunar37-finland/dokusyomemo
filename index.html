@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>読書ノート</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="読書ノート">
+<meta name="theme-color" content="#2f5d7c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6f2;--card:#fff;--ink:#1f2a2e;--sub:#6b777b;--line:#dfe3dd;--acc:#2f5d7c;--accbg:#e6eef3;--mine:#fbf3e4;--mineline:#c98a2b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161c1f;--card:#1f282c;--ink:#e8ecea;--sub:#93a0a4;--line:#2f3b40;--acc:#7fb0cf;--accbg:#22333d;--mine:#2b2619;--mineline:#d9a24a}}
+:root[data-theme="dark"]{--bg:#161c1f;--card:#1f282c;--ink:#e8ecea;--sub:#93a0a4;--line:#2f3b40;--acc:#7fb0cf;--accbg:#22333d;--mine:#2b2619;--mineline:#d9a24a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"BIZ UDPGothic","BIZ UDGothic","Hiragino Sans","Yu Gothic",sans-serif;line-height:1.75;font-size:16px}
+main{max-width:680px;margin:0 auto;padding:12px 16px 60px}
+h1{font-family:"BIZ UDPGothic","BIZ UDGothic","Hiragino Sans","Yu Gothic",sans-serif;font-size:22px;margin:0 0 8px;letter-spacing:.04em}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--bg)}
+.chip.add{border-style:dashed;color:var(--acc)}
+.newbook{display:flex;gap:8px;margin-bottom:14px}
+input,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+textarea{resize:vertical;min-height:84px;line-height:1.7}
+.btn{border:0;background:var(--acc);color:var(--bg);border-radius:8px;padding:10px 18px;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:none;color:var(--sub);padding:4px 8px;font-size:13px;font-weight:400}
+.composer{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.bt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}
+.bt b{font-family:"BIZ UDPGothic","BIZ UDGothic","Hiragino Sans","Yu Gothic",sans-serif;font-size:19px}
+.daterow{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.daterow input[type=date]{width:auto}
+.dlabel{color:var(--acc);font-weight:500}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:13px;color:var(--sub);margin-bottom:2px}
+.f-mine textarea{background:var(--mine);border-color:var(--mineline)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hint{font-size:12px;color:var(--sub)}
+.day{margin:16px 0 6px;font-weight:500;color:var(--acc);font-size:15px}
+.day small{color:var(--sub);font-weight:400;margin-left:8px}
+.entry{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.src{border-left:3px solid var(--acc);padding-left:10px;white-space:pre-wrap;margin:0 0 8px}
+.mine{background:var(--mine);border-left:3px solid var(--mineline);padding:6px 10px;border-radius:0 6px 6px 0;white-space:pre-wrap;margin:0}
+.tag{font-size:12px;color:var(--sub);display:block}
+.empty{color:var(--sub);text-align:center;padding:40px 0}
+.tools{display:flex;justify-content:flex-end;margin-top:-4px}
+.books{margin-bottom:8px}
+.cat{margin-bottom:0}
+.catname{font-family:"BIZ UDPGothic","BIZ UDGothic","Hiragino Sans","Yu Gothic",sans-serif;font-size:14px;color:var(--sub);margin:0 0 -8px 4px;letter-spacing:.06em}
+.shelf{display:flex;align-items:flex-end;gap:4px;overflow-x:auto;overflow-y:hidden;padding:14px 10px 0;min-height:40px;background:linear-gradient(to top,#8c6b49 0 8px,#6b4f35 8px 10px,rgba(0,0,0,.12) 10px 18px,transparent 18px)}
+.spine{flex:none;writing-mode:vertical-rl;text-orientation:upright;font-family:"BIZ UDPGothic","BIZ UDGothic","Hiragino Sans","Yu Gothic",sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;color:#fbf6ea;border:0;border-radius:2px 2px 0 0;padding:18px 0;margin-bottom:10px;cursor:pointer;overflow:hidden;white-space:normal;word-break:break-all;line-height:1.35;background-image:linear-gradient(to bottom,transparent 8px,#d8bf86 8px 10px,transparent 10px calc(100% - 10px),#d8bf86 calc(100% - 10px) calc(100% - 8px),transparent calc(100% - 8px)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,0) 30%,rgba(0,0,0,.22));transition:transform .15s,box-shadow .15s}
+.spine[aria-pressed="true"]{transform:translateY(-12px);box-shadow:0 8px 10px rgba(0,0,0,.35)}
+.addbook{margin-top:8px;border:1.5px dashed var(--acc);background:none;color:var(--acc);border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer}
+.newbook{flex-wrap:wrap}.newbook input{flex:1 1 140px;width:auto}
+.src,.mine{white-space:normal}.src p,.mine p{margin:0 0 4px}.src ul,.mine ul{margin:0 0 4px;padding-left:1.3em}.src li::marker,.mine li::marker{color:var(--acc)}
+.field label .btn{margin-left:6px;padding:0 8px}
+.info{margin-bottom:12px;border:1px solid var(--line);border-radius:8px;padding:8px 10px}.info summary{cursor:pointer;color:var(--acc);font-weight:500}.info[open] summary{margin-bottom:8px}.info textarea{min-height:64px}
+.nav{display:flex;gap:8px;margin-bottom:6px}.share{display:block;margin:0 0 12px;font-size:14px}.share input{width:auto;margin-right:6px}.share small{color:var(--sub);margin-left:6px}
+.fr h2{font-size:18px;margin:20px 0 8px}.fb{margin-bottom:10px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--card)}.fb summary{cursor:pointer}.fb summary small{color:var(--sub);margin-left:8px}.fb .ov{color:var(--sub);margin:8px 0}
+.tw{overflow-x:auto}.done{width:100%;border-collapse:collapse;font-size:14px}.done th{text-align:left;color:var(--sub);font-weight:400;border-bottom:1px solid var(--line);padding:6px 8px;white-space:nowrap}.done td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}.done tr[data-id]{cursor:pointer}.done td:first-child{white-space:nowrap;color:var(--acc)}.done td:last-child,.done th:last-child{text-align:right;white-space:nowrap}
+.tog{display:block;margin:2px 0 4px 4px;border:0;background:none;color:var(--sub);font:inherit;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline}
+.foot{margin-top:28px;text-align:center}.cand{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px;margin-top:6px;font:inherit;cursor:pointer}.cand small{display:block;color:var(--sub)}
+</style>
+</head>
+<body>
+<main>
+<h1>読書ノート</h1>
+<div class="books" id="books"></div>
+<div class="nav" id="nav"></div>
+<div class="hint" id="sync" style="margin:0 0 6px">この端末のみに保存</div>
+<div id="app"></div>
+<div class="foot"><button class="btn ghost" id="exp">バックアップを書き出す</button><button class="btn ghost" id="impb">バックアップを読み込む</button><input type="file" id="imp" accept=".json,application/json" hidden></div>
+</main>
+<script>
+const KEY="reading-log-v1";
+let showOthers=(()=>{try{return localStorage.getItem("reading-log-others")!=="0"}catch(e){return true}})(),doneAsc=false,infoOpen=false,S={books:[],cur:null},col=null,DB=null,UID=null,USER=null,friends=[],names={},view="mine";
+try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+const cache=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const setSync=t=>{const e=document.getElementById("sync");if(e)e.textContent=t};
+const pub=()=>{if(!DB||!UID)return;try{const bs=S.books.filter(b=>b.shared).map(b=>({id:b.id,title:b.title,category:b.category||"",author:b.author||"",pages:b.pages||0,overview:b.overview||"",entries:b.entries||[]}));const d={books:bs,updated:Date.now()};if(JSON.stringify(d).length>230000){setSync("共有する本の記録が多すぎて共有できません");return}DB.doc("shared/"+UID).set(d).catch(fail)}catch(e){fail(e)}};
+const keep=()=>{const ids=["t1","t2","nb","nc","na","np","no","ba","bp","bo","bc"];const v=ids.map(i=>{const e=document.getElementById(i);return e?e.value:null});render();ids.forEach((i,k)=>{const e=document.getElementById(i);if(e&&v[k])e.value=v[k]})};
+const meta=b=>[b.category,b.author,b.pages?"全"+b.pages+"ページ":""].filter(Boolean).join(" ・ ");
+const fb=b=>{const g={};(b.entries||[]).forEach(e=>(g[e.date]=g[e.date]||[]).push(e));return `<details class="fb"><summary><b>${esc(b.title)}</b><small>${esc(meta(b))}</small></summary>${b.overview?`<p class="ov">${esc(b.overview)}</p>`:""}${Object.keys(g).sort().reverse().map(d=>`<div class="day">${dlabel(d).base}</div>`+g[d].map(e=>`<article class="entry">${e.src?`<div class="src">${fmt(e.src)}</div>`:""}${e.mine?`<div class="mine">${fmt(e.mine)}</div>`:""}</article>`).join("")).join("")||'<p class="empty">まだ記録がありません</p>'}</details>`};
+const friendsHTML=()=>!friends.length?'<p class="empty">まだ友達が共有している本はありません</p>':friends.map(f=>`<section class="fr"><h2>${esc(names[f.id]||"友達")}の本棚</h2>${f.books.map(fb).join("")}</section>`).join("");
+const GC={"Fiction":"小説","Business & Economics":"ビジネス","Self-Help":"自己啓発","History":"歴史","Science":"科学","Computers":"IT","Biography & Autobiography":"伝記","Comics & Graphic Novels":"漫画","Philosophy":"哲学","Psychology":"心理学","Cooking":"料理","Health & Fitness":"健康","Education":"教育","Social Science":"社会"};
+const autofill=async(p,title,done)=>{const say=t=>{const e=document.getElementById("amsg");if(e)e.textContent=t},box=()=>document.getElementById("acand");if(box())box().innerHTML="";if(!title){say("先にタイトルを入れてください");return}say("調べています…");try{const au=(document.getElementById(p+"a")||{}).value||"";const isb=title.replace(/[-\s]/g,"");const q=/^\d{10}(\d{3})?$/.test(isb)?"isbn:"+isb:"intitle:"+title+(au?" inauthor:"+au:"");const res=await fetch("https://www.googleapis.com/books/v1/volumes?printType=books&maxResults=6&q="+encodeURIComponent(q));if(!res.ok)throw new Error("status "+res.status);const items=((await res.json()).items||[]).map(x=>x.volumeInfo).filter(Boolean);if(!items.length){say("見つかりませんでした。手入力してください");return}say("近いものを選んでください");const b=box();if(!b)return;b.innerHTML=items.map((v,i)=>`<button type="button" class="cand" data-i="${i}"><b>${esc(v.title||"")}</b><small>${esc((v.authors||[]).join("、"))}${v.pageCount?" ・ "+v.pageCount+"ページ":""}</small></button>`).join("");b.querySelectorAll(".cand").forEach(btn=>btn.onclick=()=>{const v=items[btn.dataset.i];const vals={c:GC[(v.categories||[])[0]]||"",a:(v.authors||[]).join("、"),p:v.pageCount||"",o:(v.description||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim().slice(0,300)};for(const k in vals){const e=document.getElementById(p+k);if(e&&!e.value&&vals[k])e.value=vals[k]}b.innerHTML="";if(done)done();say("入力しました。内容を確認してください")})}catch(e){say("調べられませんでした。通信を確認してください")}};
+const exportData=async()=>{const name="reading-log-"+today()+".json";const file=new File([JSON.stringify({app:"reading-log",version:1,books:S.books},null,1)],name,{type:"application/json"});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return}}catch(e){if(e&&e.name==="AbortError")return}const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)};
+const importData=file=>{const fr=new FileReader();fr.onload=()=>{try{const d=JSON.parse(fr.result);const bs=Array.isArray(d)?d:d.books;if(!Array.isArray(bs))throw 0;let nb=0,ne=0;bs.forEach(ib=>{if(!ib||!ib.id||!ib.title)return;const lb=S.books.find(x=>x.id===ib.id);if(!lb){S.books.push({...ib,entries:Array.isArray(ib.entries)?ib.entries:[]});nb++;ne+=(ib.entries||[]).length}else{const have=new Set(lb.entries.map(e=>e.id));(ib.entries||[]).forEach(e=>{if(!have.has(e.id)){lb.entries.push(e);ne++}});["category","author","pages","overview","reading","finished"].forEach(k=>{if(!lb[k]&&ib[k])lb[k]=ib[k]})}});if(!S.cur&&S.books[0])S.cur=S.books[0].id;cache();render();setSync("読み込みました(本"+nb+"冊、記録"+ne+"件を追加)")}catch(e){setSync("このファイルは読み込めません")}};fr.readAsText(file)};
+const dirty=new Set(),gone=new Set();
+const fail=e=>setSync("同期に失敗しました("+((e&&(e.code||e.message))||"error")+")。この端末には保存済みです");
+const save=id=>{cache();if(!col)return;try{const b=S.books.find(x=>x.id===id);if(!b)return;if(!b.created)b.created=Date.now();const p=col.doc(id).set({title:b.title,entries:b.entries,created:b.created,category:b.category||"",author:b.author||"",pages:b.pages||0,overview:b.overview||"",shared:!!b.shared,reading:!!b.reading,finished:b.finished||""});dirty.add(id);if(b.shared)pub();p.then(()=>{dirty.delete(id);setSync("同期済み")}).catch(fail)}catch(e){fail(e)}};
+const removeBook=id=>{cache();if(!col)return;try{gone.add(id);dirty.delete(id);pub();col.doc(id).delete().then(()=>gone.delete(id)).catch(fail)}catch(e){fail(e)}};
+const $=s=>document.querySelector(s);
+const cats=()=>[...new Set(S.books.map(b=>b.category).filter(Boolean))];
+const fmt=t=>{let o="",inl=false;for(const l of t.split("\n")){const m=l.match(/^\s*[・•\-*]\s*(.*)$/);if(m){if(!inl){o+="<ul>";inl=true}o+="<li>"+esc(m[1])+"</li>"}else{if(inl){o+="</ul>";inl=false}if(l.trim())o+="<p>"+esc(l)+"</p>"}}if(inl)o+="</ul>";return o};
+const info=b=>[b.author,b.pages?"全"+b.pages+"ページ":"",b.finished?"読了 "+b.finished.slice(5).replace("-","/"):""].filter(Boolean).join(" ・ ")||"本の情報";
+const dfmt=iso=>iso.split("-").join("/");
+const doneHTML=()=>{const l=S.books.filter(b=>b.finished).sort((a,b)=>(a.finished<b.finished?-1:a.finished>b.finished?1:0)*(doneAsc?1:-1));if(!l.length)return '<p class="empty">まだ読み終わった本はありません。<br>本の情報の「読書完了にする」を押すと、ここに並びます。</p>';const tp=l.reduce((a,b)=>a+(b.pages||0),0);return `<div class="row" style="margin:8px 0"><span class="hint">${l.length}冊${tp?" ・ 計"+tp+"ページ":""}</span><button class="btn ghost" id="dord">${doneAsc?"古い順":"新しい順"}</button></div><div class="tw"><table class="done"><thead><tr><th>読了日</th><th>書名</th><th>著者</th><th>ページ</th></tr></thead><tbody>${l.map(b=>`<tr data-id="${b.id}"><td>${esc(dfmt(b.finished))}</td><td><b>${esc(b.title)}</b></td><td>${esc(b.author||"")}</td><td>${b.pages||""}</td></tr>`).join("")}</tbody></table></div>`};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const W=["日","月","火","水","木","金","土"];
+function dlabel(iso){
+  const [y,m,d]=iso.split("-").map(Number),dt=new Date(y,m-1,d),n=new Date();
+  const diff=Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-dt)/864e5);
+  const base=(y!==n.getFullYear()?y+"年":"")+m+"月"+d+"日("+W[dt.getDay()]+")";
+  const rel=diff===0?"今日":diff===1?"昨日":diff===2?"一昨日":diff>2&&diff<30?diff+"日前":"";
+  return{base,rel};
+}
+let draftDate=today(),addingBook=false;
+function render(){
+  const nv=$("#nav");
+  if(nv){nv.innerHTML=`<button class="chip" id="vm" aria-pressed="${view==="mine"}">自分の本棚</button><button class="chip" id="vd" aria-pressed="${view==="done"}">読了リスト</button>${UID?`<button class="chip" id="vf" aria-pressed="${view==="friends"}">友達の本棚${friends.length?"("+friends.length+")":""}</button>`:""}`;$("#vm").onclick=()=>{view="mine";render()};$("#vd").onclick=()=>{view="done";render()};if(UID)$("#vf").onclick=()=>{view="friends";render()}}
+  if(view==="done"){$("#books").innerHTML="";$("#app").innerHTML=doneHTML();const o=$("#dord");if(o)o.onclick=()=>{doneAsc=!doneAsc;render()};document.querySelectorAll(".done tr[data-id]").forEach(r=>r.onclick=()=>{S.cur=r.dataset.id;addingBook=false;infoOpen=true;view="mine";cache();render()});return}
+  if(view==="friends"&&UID){$("#books").innerHTML="";$("#app").innerHTML=friendsHTML();return}
+  const bk=$("#books");
+  const COL=["#2f4f6b","#7a4538","#46634a","#62496b","#a06a2c","#365a5c","#84384a","#454a78"];
+  const hs=t=>{let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;return h};
+  const dim=(t,h)=>{const n=[...t].length,c=n<=9?1:n<=36?2:3,per=Math.ceil(n/c);return `height:${Math.max(110,per*16+44)+(h>>3)%3*6}px;width:${c*21+20}px`};
+  const spine=b=>{const h=hs(b.title);return `<button class="spine" aria-pressed="${b.id===S.cur}" data-b="${b.id}" title="${esc(b.title)}" style="background-color:${COL[h%COL.length]};${dim(b.title,h)}">${esc(b.title)}</button>`};
+  const RK="\u0001";const grp={};S.books.forEach(b=>{const k=b.reading?RK:(b.category||"");(grp[k]=grp[k]||[]).push(b)});
+  const names=Object.keys(grp).sort((a,b)=>a===RK?-1:b===RK?1:a===""?1:b===""?-1:a.localeCompare(b,"ja"));
+  const cat=n=>`<div class="cat">${(n||names.length>1)?`<div class="catname"${n===RK?' style="color:var(--acc);font-weight:700"':""}>${esc(n===RK?"読書中":(n||"未分類"))}</div>`:""}<div class="shelf">${grp[n].map(spine).join("")}</div></div>`;
+  const oth=names.filter(n=>n!==RK);
+  bk.innerHTML=(grp[RK]?cat(RK):"")+(oth.length?`<button class="tog" id="tog">${showOthers?"読書中以外を隠す":"読書中以外を表示("+oth.reduce((a,n)=>a+grp[n].length,0)+"冊)"}</button>`:"")+(showOthers?oth.map(cat).join(""):"")+`<button class="addbook" id="addb">＋ 本を追加</button>`;
+  if($("#tog"))$("#tog").onclick=()=>{showOthers=!showOthers;try{localStorage.setItem("reading-log-others",showOthers?"1":"0")}catch(e){}render()};
+  bk.querySelectorAll("[data-b]").forEach(el=>el.onclick=()=>{const same=S.cur===el.dataset.b&&!addingBook;S.cur=el.dataset.b;addingBook=false;infoOpen=same?!infoOpen:true;cache();render()});
+  $("#addb").onclick=()=>{addingBook=true;render();const i=$("#nb");if(i)i.focus()};
+  const app=$("#app");
+  if(addingBook||!S.books.length){
+    app.innerHTML=`<div class="newbook"><input id="nb" placeholder="本のタイトル" autocomplete="off"><input id="nc" list="cats" placeholder="分類(任意)" autocomplete="off"><datalist id="cats">${cats().map(c=>`<option value="${esc(c)}">`).join("")}</datalist><input id="na" placeholder="著者(任意)" autocomplete="off"><input id="np" type="number" inputmode="numeric" min="1" placeholder="全ページ数(任意)" style="max-width:150px"><textarea id="no" placeholder="本の概要(任意)" style="flex:1 1 100%;min-height:64px"></textarea><button type="button" class="btn ghost" id="nauto">自動入力</button><button class="btn" id="nbok">追加</button><span class="hint" id="amsg" style="flex:1 1 100%"></span><div id="acand" style="flex:1 1 100%"></div></div>${S.books.length?"":'<p class="empty">まず読んでいる本のタイトルを入れてな。<br>あとは日付と書きたいことだけ。</p>'}`;
+    const go=()=>{const t=$("#nb").value.trim();if(!t)return;const id="b"+Date.now();S.books.push({id,title:t,entries:[],created:Date.now(),reading:true,category:$("#nc").value.trim(),author:$("#na").value.trim(),pages:Number($("#np").value)||0,overview:$("#no").value.trim()});S.cur=id;addingBook=false;save(id);render();$("#t1").focus()};
+    $("#nbok").onclick=go;$("#nauto").onclick=()=>autofill("n",$("#nb").value.trim());$("#nb").onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)go()};
+    return;
+  }
+  const b=S.books.find(x=>x.id===S.cur)||S.books[0];S.cur=b.id;
+  const dl=dlabel(draftDate);
+  const groups={};b.entries.forEach(e=>(groups[e.date]=groups[e.date]||[]).push(e));
+  const days=Object.keys(groups).sort().reverse();
+  app.innerHTML=`
+  <section class="composer">
+    <div class="bt"><b>${esc(b.title)}</b></div>
+    <details class="info"${infoOpen?" open":""}><summary id="isum">${esc(info(b))}</summary>
+      <div class="daterow"><input id="bc" list="cats" value="${esc(b.category||"")}" placeholder="分類(例:小説、仕事、実用書)" autocomplete="off"><datalist id="cats">${cats().map(c=>`<option value="${esc(c)}">`).join("")}</datalist></div>
+      <label class="share"><input type="checkbox" id="br"${b.reading?" checked":""}>読書中</label>
+      <div class="row" style="margin-bottom:8px"><button type="button" class="btn ghost" id="bdone">${b.finished?"読書完了を取り消す":"読書完了にする"}</button>${b.finished?`<input type="date" id="bf" value="${b.finished}" style="width:auto">`:""}</div>
+      ${UID?`<label class="share"><input type="checkbox" id="bs"${b.shared?" checked":""}>友達に共有</label>`:""}
+      <div class="row" style="margin-bottom:8px"><button type="button" class="btn ghost" id="bauto">タイトルから自動入力</button><span class="hint" id="amsg"></span></div>
+      <div id="acand"></div>
+      <div class="daterow"><input id="ba" value="${esc(b.author||"")}" placeholder="著者" autocomplete="off"><input id="bp" type="number" inputmode="numeric" min="1" value="${b.pages||""}" placeholder="全ページ数" style="max-width:130px"></div>
+      <textarea id="bo" placeholder="本の概要">${esc(b.overview||"")}</textarea>
+      <div class="tools" style="margin-top:6px"><button class="btn ghost" id="delb">この本を削除</button></div>
+    </details>
+    <div class="daterow"><input type="date" id="dt" value="${draftDate}"><span class="dlabel">${dl.rel?dl.rel+"・":""}${dl.base}</span></div>
+    <div class="field"><label for="t1">本に書いてあったこと<button type="button" class="btn ghost" id="bl">・ 箇条書き</button></label><textarea id="t1" placeholder="気になった一文、要点、ページ番号など"></textarea></div>
+    <div class="field f-mine"><label for="t2">自分の考え</label><textarea id="t2" placeholder="思ったこと、疑問、使えそうなこと"></textarea></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="sv">記録する</button></div>
+    <div class="hint" id="msg" style="margin-top:6px;color:#c0392b"></div>
+  </section>
+  ${days.length?days.map(d=>{const l=dlabel(d);return`<div class="day">${l.base}<small>${l.rel}</small></div>`+groups[d].slice().reverse().map(e=>`<article class="entry">${e.src?`<div class="src">${fmt(e.src)}</div>`:""}${e.mine?`<div class="mine">${fmt(e.mine)}</div>`:""}<div class="tools"><button class="btn ghost" data-del="${e.id}">削除</button></div></article>`).join("")}).join(""):'<p class="empty">まだ記録がないよ。上に書いてみよう。</p>'}`;
+  $("#dt").onchange=e=>{draftDate=e.target.value||today();const l=dlabel(draftDate);$(".dlabel").textContent=(l.rel?l.rel+"・":"")+l.base};
+  const add=()=>{try{const s=$("#t1").value.trim(),m=$("#t2").value.trim();if(!s&&!m){$("#msg").textContent="どちらかの欄に書いてから押してください";return}b.entries=[...(Array.isArray(b.entries)?b.entries:[]),{id:"e"+Date.now(),date:draftDate,src:s,mine:m}];save(b.id);render();$("#t1").focus()}catch(e){const x=$("#msg");if(x)x.textContent="エラー: "+((e&&e.message)||e)}};
+  $("#bc").onchange=e=>{const v=["t1","t2"].map(i=>$("#"+i).value);b.category=e.target.value.trim();save(b.id);render();["t1","t2"].forEach((i,k)=>{$("#"+i).value=v[k]})};
+  $("#bl").onclick=()=>{const t=$("#t1"),v=t.value,st=t.selectionStart,ls=v.lastIndexOf("\n",st-1)+1;if(v[ls]!=="・"){t.value=v.slice(0,ls)+"・"+v.slice(ls);t.selectionStart=t.selectionEnd=st+1}t.focus()};
+  [$("#t1"),$("#t2")].forEach(t=>t.addEventListener("keydown",e=>{if(e.key!=="Enter"||e.isComposing||e.ctrlKey||e.metaKey||e.shiftKey)return;const v=t.value,st=t.selectionStart,ls=v.lastIndexOf("\n",st-1)+1,line=v.slice(ls,st);if(!line.startsWith("・"))return;e.preventDefault();if(line.trim()==="・"){t.value=v.slice(0,ls)+v.slice(st);t.selectionStart=t.selectionEnd=ls}else{t.value=v.slice(0,st)+"\n・"+v.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=st+2}}));
+  const upd=()=>{b.author=$("#ba").value.trim();b.pages=Number($("#bp").value)||0;b.overview=$("#bo").value.trim();save(b.id);$("#isum").textContent=info(b)};
+  ["#ba","#bp","#bo"].forEach(i=>$(i).onchange=upd);
+  $("#bauto").onclick=()=>autofill("b",b.title,()=>{b.category=$("#bc").value.trim();upd()});
+  if($("#bs"))$("#bs").onchange=e=>{b.shared=e.target.checked;save(b.id);if(!b.shared)pub()};
+  $("#br").onchange=e=>{b.reading=e.target.checked;if(b.reading)b.finished="";save(b.id);keep()};
+  $("#bdone").onclick=()=>{if(b.finished){b.finished=""}else{b.finished=today();b.reading=false}save(b.id);keep()};
+  if($("#bf"))$("#bf").onchange=e=>{if(e.target.value){b.finished=e.target.value;save(b.id);$("#isum").textContent=info(b)}};
+  $(".info").ontoggle=e=>{infoOpen=e.target.open};
+  $("#sv").onclick=add;
+  [$("#t1"),$("#t2")].forEach(t=>t.onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")add()});
+  $("#delb").onclick=e=>{const btn=e.currentTarget;if(!btn.dataset.armed){btn.dataset.armed="1";btn.textContent="もう一度押すと削除します";btn.style.color="#c0392b";setTimeout(()=>{if(btn.isConnected){delete btn.dataset.armed;btn.textContent="この本を削除";btn.style.color=""}},4000);return}S.books=S.books.filter(x=>x.id!==b.id);S.cur=S.books[0]?S.books[0].id:null;removeBook(b.id);render()};
+  app.querySelectorAll("[data-del]").forEach(el=>el.onclick=()=>{b.entries=b.entries.filter(x=>x.id!==el.dataset.del);save(b.id);render()});
+}
+render();
+$("#exp").onclick=exportData;$("#impb").onclick=()=>$("#imp").click();$("#imp").onchange=e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value=""};
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+
+</script>
+</body>
+</html>
